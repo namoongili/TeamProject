@@ -1,5 +1,5 @@
 package Products;
 
-public class sample {
+public class Sample {
 
 }
