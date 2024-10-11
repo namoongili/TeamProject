@@ -103,6 +103,10 @@
                 category.addEventListener('mouseover', () => {
                     mainImage.src = '/BooKorn/imgs/홈화면/yes.jpg';
                 });
+            } else if (categoryText === '외국도서') {
+                category.addEventListener('mouseover', () => {
+                    mainImage.src = '/BooKorn/imgs/홈화면/외국도서.jpg';
+                });
             } else {
                 category.addEventListener('mouseover', () => {
                     mainImage.src = `/BooKorn/imgs/홈화면/삶에시가없다면_배경_${Array.from(categories).indexOf(category) + 1}.png`;
@@ -116,7 +120,5 @@
         });
     });
 </script>
-
-
 </body>
 </html>
