@@ -59,11 +59,12 @@ public class CartDAO {
 //				list.add(cart);
 				
 				while( rs.next()) {
+					String id = rs.getString(3);
 					int quantity = rs.getInt(4);
 					String name = rs.getString(5);
 					String detail = rs.getString(6);
 					int price = rs.getInt(7);
-					Cart cart = new Cart(quantity,name,detail,price);
+					Cart cart = new Cart(quantity,name,detail,price,id);
 					
 					System.out.println(cart.toString());
 					list.add(cart);
@@ -80,6 +81,20 @@ public class CartDAO {
 			}	
 
 		return list;		
+	}
+	
+	public void deleteCartitem(String userId, String cartItemId) throws SQLException {
+		Connection con = dbCon();
+	
+        String sql = "DELETE FROM cartitem WHERE cart_id = (SELECT cart_id FROM cart WHERE user_id = ?) AND product_id = ?";
+        
+        try (PreparedStatement pst = con.prepareStatement(sql)) {
+            pst.setString(1, userId);
+            pst.setString(2, cartItemId);
+            pst.executeUpdate();
+        } finally {
+            con.close();
+        }
 	}
 	
 	
