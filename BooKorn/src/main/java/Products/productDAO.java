@@ -87,9 +87,7 @@ public class productDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-				
 		close(rs,pst,con);
-		
 		return p;
 	}
 	
@@ -138,18 +136,76 @@ public class productDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-			
 		close(rs,pst,con);
-		
-		
-		
 		return list ;
 	}
 	
+	public int insertComment(comment newComment) {
+		
+		Connection con = null;
+	    PreparedStatement pst = null;
+
+	    String sql = "INSERT INTO comments (product_id, user_id, comment_text, rating) VALUES (?, ?, ?, ?)";
+	    int rRow = -1;
+	    try {
+	    	con = dbCon();
+			pst = con.prepareStatement(sql);
+			pst.setString(1, newComment.getProduct_id());
+	        pst.setString(2, newComment.getUser_id());
+	        pst.setString(3, newComment.getComment_text());
+	        pst.setInt(4, newComment.getRating());
+	        rRow = pst.executeUpdate();
+	        updateCount(newComment.getProduct_id());
+	        updateRate(newComment.getProduct_id());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    close(pst, con);
+	    
+		return rRow;
+	}
 	
+	public int updateCount(String product_id) {
+		Connection con = null;
+		PreparedStatement pst = null;
+		int rRow =-1;
+		String sql = "UPDATE products SET product_commentCnt = product_commentCnt + 1 WHERE product_id = ?";
+		
+		try {
+			con = dbCon();
+			pst = con.prepareStatement(sql);
+			pst.setString(1, product_id);
+			rRow = pst.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		close(pst, con);
+		
+		return rRow;
+	}
 	
-	
-	
+	public int updateRate(String product_id) {
+		Connection con = null;
+		PreparedStatement pst = null;
+		int rRow =-1;
+		String sqlUpdateGrade = "UPDATE products SET product_grade = (SELECT AVG(rating) FROM comments WHERE product_id = ?) WHERE product_id = ?";
+		
+		try {
+			con = dbCon();
+			pst = con.prepareStatement(sqlUpdateGrade);
+			pst.setString(1, product_id);
+			pst.setString(2, product_id);
+			rRow = pst.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		close(pst, con);
+		
+		return rRow;
+	}
 	
 	
 	

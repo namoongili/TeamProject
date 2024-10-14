@@ -112,17 +112,16 @@
     $(document).ready(function() {
         loadReviews(currentPage);
     });
-	/*
-    // 리뷰 등록 함수 (예시용, 실제로는 백엔드 로직에 맞게 추가 필요)
+	
     function submitReview() {
         var commentText = $('#comment_text').val();
         var rating = $('#rating').val();
 
         $.ajax({
-            url: "submitReview", // 리뷰 등록 서블릿으로 요청 보냄
+            url: "insertcomment", // 리뷰 등록 서블릿으로 요청 보냄
             method: "POST",
             data: {
-                productId: productId,
+            	product_id: product_id,
                 comment_text: commentText,
                 rating: rating
             },
@@ -133,7 +132,7 @@
             }
         });
     }
-	*/
+	
 </script>
 
 </body>
