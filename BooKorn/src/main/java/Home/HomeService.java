@@ -1,19 +1,42 @@
 package Home;
 
+import java.util.List;
+
 public class HomeService {
 
-	
-	
-	// 오늘의 책
-	
-	
-	
-	// 베스트셀러
-	
-	
-	
-	//카테고리
-	
-	
-	
+    private HomeDAO homeDAO;
+
+    public HomeService() {
+        this.homeDAO = new HomeDAO();
+    }
+
+
+    public String getTodayBook() {
+        return homeDAO.getTodayBook();
+    }
+
+
+    public List<String> getBestSellers() {
+        return homeDAO.getBestSellers();
+    }
+
+
+    public List<String> getBooksByCategory(String categoryId) {
+        return homeDAO.getBooksByCategory(categoryId);
+    }
+
+
+    public boolean login(String userId, String password) {
+        return homeDAO.login(userId, password);
+    }
+
+
+    public List<String> getCartItems(String userId) {
+        return homeDAO.getCartItems(userId);
+    }
+
+
+    public String getMyPageInfo(String userId) {
+        return homeDAO.getMyPageInfo(userId);
+    }
 }
