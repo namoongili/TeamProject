@@ -3,7 +3,7 @@ package Home;
 import java.util.List;
 
 public class HomeService {
-
+	/*
     private HomeDAO homeDAO;
 
     public HomeService() {
@@ -39,4 +39,5 @@ public class HomeService {
     public String getMyPageInfo(String userId) {
         return homeDAO.getMyPageInfo(userId);
     }
+    */
 }

@@ -29,6 +29,14 @@ public class insertComment extends HttpServlet{
         String commentText = req.getParameter("comment_text");
         int rating = Integer.parseInt(req.getParameter("rating"));
         
+        if (commentText == null || commentText.trim().isEmpty()) {
+            // JSON 응답 생성: 댓글 입력 필요
+            resp.setContentType("application/json");
+            resp.setCharacterEncoding("UTF-8");
+            resp.getWriter().write("{\"status\": \"error\", \"message\": \"내용을 입력해주세요.\"}");
+            return; // 더 이상 진행하지 않고 메서드 종료
+        }
+        
         comment newComment = new comment(productId, userId, commentText, rating);
         // 댓글 서비스 클래스 인스턴스 생성
         commentService service = new commentService();
