@@ -13,9 +13,9 @@ public class CartDAO {
 	private String user="system";
 	private String password="pass";
 
-	public static void main(String[] args) throws SQLException {
-		
-	}
+//	public static void main(String[] args) throws SQLException {
+//		getCart("minsoo001");
+//	}
 	private Connection dbCon() throws SQLException {
 	    Connection con = null;
 	        try {
@@ -33,7 +33,12 @@ public class CartDAO {
 		Connection con = dbCon();
 		
 		//sql
-			String sql="SELECT ci.* FROM cart c JOIN cartitem ci ON c.cart_id = ci.cart_id WHERE c.user_id = ?";	
+			String sql="SELECT ci.*, p.product_name, p.product_detail, p.product_price\n"
+					+ "FROM cart c\n"
+					+ "JOIN cartitem ci ON c.cart_id = ci.cart_id\n"
+					+ "JOIN products p ON ci.product_id = p.product_id\n"
+					+ "WHERE c.user_id = ?";
+			
 			
 			//sql실행
 			PreparedStatement pst=null;
@@ -47,14 +52,21 @@ public class CartDAO {
 				
 				rs =pst.executeQuery();
 				
-				System.out.println(rs.next());
+//				String product = rs.getString(3);
+//				int quantity = rs.getInt(4);
+//				Cart cart = new Cart(product,quantity);
+//			
+//				list.add(cart);
+				
 				while( rs.next()) {
-					String product = rs.getString(3);
+					String id = rs.getString(3);
 					int quantity = rs.getInt(4);
+					String name = rs.getString(5);
+					String detail = rs.getString(6);
+					int price = rs.getInt(7);
+					Cart cart = new Cart(quantity,name,detail,price,id);
 					
-					Cart cart = new Cart(product,quantity);
 					System.out.println(cart.toString());
-					
 					list.add(cart);
 					
 				}
@@ -69,6 +81,20 @@ public class CartDAO {
 			}	
 
 		return list;		
+	}
+	
+	public void deleteCartitem(String userId, String cartItemId) throws SQLException {
+		Connection con = dbCon();
+	
+        String sql = "DELETE FROM cartitem WHERE cart_id = (SELECT cart_id FROM cart WHERE user_id = ?) AND product_id = ?";
+        
+        try (PreparedStatement pst = con.prepareStatement(sql)) {
+            pst.setString(1, userId);
+            pst.setString(2, cartItemId);
+            pst.executeUpdate();
+        } finally {
+            con.close();
+        }
 	}
 	
 	
