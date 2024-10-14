@@ -23,7 +23,6 @@ public class CartServlet extends HttpServlet {
 			ArrayList<Cart> cl = getCart(userId);
 			
 			request.setAttribute("cartItemsResult", cl);
-			ArrayList<Cart>cl2 = (ArrayList<Cart>) request.getAttribute("cartItemsResult");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
