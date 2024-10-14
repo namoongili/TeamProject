@@ -1,5 +1,5 @@
+<%@ page import="Home.Book" %>
 <%@ page import="java.util.List" %>
-<%@ page import="java.util.ArrayList" %> <!-- ArrayList도 필요할 경우 추가 -->
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%
     response.setContentType("text/html; charset=UTF-8");
@@ -9,6 +9,8 @@
     Boolean isLoggedIn = (Boolean) request.getAttribute("isLoggedIn");
     String myPageInfo = (String) request.getAttribute("myPageInfo");
     List<String> cartItems = (List<String>) request.getAttribute("cartItems");
+    List<Book> categoryBooks = (List<Book>) request.getAttribute("categoryBooks");  // Book 객체를 사용한다고 가정
+    String selectedCategory = (String) request.getAttribute("selectedCategory");
 %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -16,17 +18,97 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BooKorn</title>
-    <link rel="stylesheet" href="/BooKorn/css/styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        /* 메인 컨텐츠 섹션 */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        /* 책 목록을 가로로 배열하는 스타일 */
+        .book-container {
+            display: flex;
+            justify-content: space-between; /* 가로로 배열 */
+            width: 100%;
+            max-width: 1200px;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        /* 각 책 박스 스타일 */
+        .book-box {
+            background-color: #f8f8f8;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 18%; /* 5개의 박스가 한 줄에 나타나도록 설정 */
+            text-align: center;
+        }
+
+        .book-box h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .book-box p {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .book-box strong {
+            font-size: 16px;
+            color: #333;
+        }
+
+        /* 중앙 이미지와 책 설명 */
+        .center-section {
+            flex-grow: 2;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .center-section img {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+        }
+
+        /* 카테고리 섹션 */
+        .category-section {
+            width: 20%;
+            padding: 20px;
+            background-color: #f8f8f8;
+            border-radius: 10px;
+        }
+        .category-section ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .category-section li {
+            padding: 12px;
+            cursor: pointer;
+        }
+        .category-section li:hover {
+            background-color: #ddd;
+        }
+    </style>
 </head>
 <body>
+
     <header>
         <nav>
-            <a href="#">국내도서</a>
-            <a href="#">외국도서</a>
-            <a href="#">중고도서</a>
-            <a href="#">eBook</a>
-            <a href="#">크레마클럽</a>
-            <a href="#">CD/LP</a>
+            <a href="?category=CAT001">국내도서</a>
+            <a href="?category=CAT002">외국도서</a>
+            <a href="?category=CAT003">중고도서</a>
+            <a href="?category=CAT004">eBook</a>
+            <a href="?category=CAT005">크레마클럽</a>
+            <a href="?category=CAT006">CD/LP</a>
         </nav>
         <div class="search-bar">
             <input type="text" placeholder="예비중학 필수! 1등 초등 세계사">
@@ -44,89 +126,41 @@
     </header>
 
     <section class="main-content">
-        <!-- 카테고리 섹션 -->
-        <aside class="category-section">
-            <ul>
-                <li><a href="?category=YES NOW">YES NOW</a></li>
-                <li><a href="?category=국내도서">국내도서</a></li>
-                <li><a href="?category=외국도서">외국도서</a></li>
-                <li><a href="?category=중고샵">중고샵</a></li>
-                <li><a href="?category=eBook">eBook</a></li>
-                <li><a href="?category=크레마클럽">크레마클럽</a></li>
-                <li><a href="?category=CD/LP">CD/LP</a></li>
-                <li><a href="?category=DVD/BD">DVD/BD</a></li>
-                <li><a href="?category=문구/GIFT">문구/GIFT</a></li>
-                <li><a href="?category=티켓">티켓</a></li>
-            </ul>
-        </aside>
-        
         <!-- 중앙 이미지 섹션 -->
         <div class="center-section">
             <h2>오늘의 책</h2>
             <div class="book-highlight">
                 <div class="book-image">
-                    <img src="/BooKorn/imgs/홈화면/모두의금리.jpg" alt="모두의 금리">
+                    <img src="/BooKorn/imgs/홈화면/모두의금리.jpg" alt="모두의 금리" style="width: 300px;">
                 </div>
                 <div class="book-description">
                     <h3><%= request.getAttribute("todayBook") %></h3>
-                    <p>경제의 중심에는 금리가 있다. 국제금융<br>최전선에서 활약한 조원경 저자의 신간.</p>
+                    <p>경제의 중심에는 금리가 있다. 국제금융 최전선에서 활약한 조원경 저자의 신간.</p>
                     <p><strong>저자: </strong>조원경</p>
                     <p><strong>가격: </strong>19,800원 (10% 할인)</p>
                 </div>
             </div>
         </div>
 
-        <!-- 베스트셀러 섹션 -->
-        <div class="right-section">
-            <h3>베스트셀러</h3>
-            <ul>
-                <% 
-                    List<String> bestSellers = (List<String>) request.getAttribute("bestSellers");
-                    for (String book : bestSellers) { 
-                %>
-                    <li><%= book %></li>
+        <!-- 카테고리별 책 목록 -->
+        <div class="book-container">
+            <% if (categoryBooks != null && !categoryBooks.isEmpty()) { %>
+                <% for (Book book : categoryBooks) { %>
+                    <div class="book-box">
+                        <h3><%= book.getName() %></h3>
+                        <p><%= book.getAuthor() %></p>
+                        <strong><%= book.getDescription() %></strong>
+                    </div>
                 <% } %>
-            </ul>
+            <% } else { %>
+                <p>해당 카테고리에 책이 없습니다.</p>
+            <% } %>
         </div>
-
     </section>
 
     <footer>
         <p>저작권 정보 등...</p>
     </footer>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const categories = document.querySelectorAll('.category-section li a');
-        const mainImage = document.getElementById('main-image');
-        
-        categories.forEach((category) => {
-            const categoryText = category.textContent.trim();
-
-            if (categoryText === '국내도서') {
-                category.addEventListener('mouseover', () => {
-                    mainImage.src = '/BooKorn/imgs/홈화면/삶에시가없다면 배경.png';
-                });
-            } else if (categoryText === 'YES NOW') {
-                category.addEventListener('mouseover', () => {
-                    mainImage.src = '/BooKorn/imgs/홈화면/yes.jpg';
-                });
-            } else if (categoryText === '외국도서') {
-                category.addEventListener('mouseover', () => {
-                    mainImage.src = '/BooKorn/imgs/홈화면/외국도서.jpg';
-                });
-            } else {
-                category.addEventListener('mouseover', () => {
-                    mainImage.src = `/BooKorn/imgs/홈화면/삶에시가없다면_배경_${Array.from(categories).indexOf(category) + 1}.png`;
-                });
-            }
-            
-            // 마우스를 떼면 기본 이미지로 돌아갑니다.
-            category.addEventListener('mouseout', () => {
-                mainImage.src = '/BooKorn/imgs/홈화면/삶에시가없다면 배경.png';
-            });
-        });
-    });
-</script>
 </body>
 </html>
