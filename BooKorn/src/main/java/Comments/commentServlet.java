@@ -30,12 +30,12 @@ public class commentServlet extends HttpServlet{
 		int totalComments = service.getTotCmt(prod_id);
 		int totalPages = (totalComments % 5 == 0) ? (totalComments / 5) : (totalComments / 5) + 1;
 		ArrayList <comment> comments = service.commentpag(prod_id, current_page);
-		String  a =comments.get(0).getComment_date();
+		//String  a =comments.get(0).getComment_date();
 		
 		resp.setContentType("application/json");
 	    resp.setCharacterEncoding("UTF-8");
 	    JsonObject jsonResponse = new JsonObject();
-        jsonResponse.addProperty("currentPage", page);
+        jsonResponse.addProperty("currentPage", current_page);
         jsonResponse.addProperty("totalPages", totalPages);
         jsonResponse.add("comments", new Gson().toJsonTree(comments));
 		
