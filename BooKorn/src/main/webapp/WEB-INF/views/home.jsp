@@ -1,7 +1,14 @@
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %> <!-- ArrayList도 필요할 경우 추가 -->
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%
     response.setContentType("text/html; charset=UTF-8");
     request.setCharacterEncoding("UTF-8");
+
+    // 로그인 여부 확인
+    Boolean isLoggedIn = (Boolean) request.getAttribute("isLoggedIn");
+    String myPageInfo = (String) request.getAttribute("myPageInfo");
+    List<String> cartItems = (List<String>) request.getAttribute("cartItems");
 %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -26,70 +33,71 @@
             <button>검색</button>
         </div>
         <div class="user-menu">
-            <a href="#">로그인</a>
-            <a href="#">마이페이지</a>
-            <a href="#">장바구니</a>
+            <% if (isLoggedIn != null && isLoggedIn) { %>
+                <a href="#">마이페이지</a>
+                <a href="#">장바구니</a>
+                <a href="/logout">로그아웃</a>
+            <% } else { %>
+                <a href="/login">로그인</a>
+            <% } %>
         </div>
     </header>
 
     <section class="main-content">
-     <!-- 카테고리 섹션 -->
-    <aside class="category-section">
-        <ul>
-            <li>YES NOW</li>
-            <li>국내도서</li>
-            <li>외국도서</li>
-            <li>중고샵</li>
-            <li>eBook</li>
-            <li>크레마클럽</li>
-            <li>CD/LP</li>
-            <li>DVD/BD</li>
-            <li>문구/GIFT</li>
-            <li>티켓</li>
-        </ul>
-    </aside>
+        <!-- 카테고리 섹션 -->
+        <aside class="category-section">
+            <ul>
+                <li><a href="?category=YES NOW">YES NOW</a></li>
+                <li><a href="?category=국내도서">국내도서</a></li>
+                <li><a href="?category=외국도서">외국도서</a></li>
+                <li><a href="?category=중고샵">중고샵</a></li>
+                <li><a href="?category=eBook">eBook</a></li>
+                <li><a href="?category=크레마클럽">크레마클럽</a></li>
+                <li><a href="?category=CD/LP">CD/LP</a></li>
+                <li><a href="?category=DVD/BD">DVD/BD</a></li>
+                <li><a href="?category=문구/GIFT">문구/GIFT</a></li>
+                <li><a href="?category=티켓">티켓</a></li>
+            </ul>
+        </aside>
         
         <!-- 중앙 이미지 섹션 -->
         <div class="center-section">
-            <img id="main-image" src="/BooKorn/imgs/홈화면/삶에시가없다면 배경.png" alt="배경이미지">
-        </div>
-
-         <!-- 모두의 금리 이미지 및 설명 -->
-        <section class="bottom-section">
+            <h2>오늘의 책</h2>
             <div class="book-highlight">
                 <div class="book-image">
                     <img src="/BooKorn/imgs/홈화면/모두의금리.jpg" alt="모두의 금리">
                 </div>
                 <div class="book-description">
-                    <h3>오늘의 책</h3>
-                    <p><strong>모두의 금리</strong></p>
-                    <p>경제의 중심에는 금리가 있다. 국제금융 <br>최전선에서 활약한 조원경 저자의 신간.</p>
-                    <p>금리가 경제와 금융 시장에 미치는 영향을 다각도로 분석하며, 자산 가치를 증가시키는 리스크 관리에 필수적인 금리 이해를 돕기 위해 작성된 책입니다.</p>
+                    <h3><%= request.getAttribute("todayBook") %></h3>
+                    <p>경제의 중심에는 금리가 있다. 국제금융<br>최전선에서 활약한 조원경 저자의 신간.</p>
                     <p><strong>저자: </strong>조원경</p>
                     <p><strong>가격: </strong>19,800원 (10% 할인)</p>
                 </div>
             </div>
-        </section>
+        </div>
 
         <!-- 베스트셀러 섹션 -->
         <div class="right-section">
             <h3>베스트셀러</h3>
             <ul>
-                <li>트렌드코리아 2025</li>
-                <li>하루 한 장 나의 어휘력 노트</li>
-                <li>생각의 연금술</li>
-                <li>고전이 말하는 마땅히 해야 할 삶에 대하여</li>
-                <li>언젠가 우리가 같은 별을 바라본다면</li>
+                <% 
+                    List<String> bestSellers = (List<String>) request.getAttribute("bestSellers");
+                    for (String book : bestSellers) { 
+                %>
+                    <li><%= book %></li>
+                <% } %>
             </ul>
         </div>
+
     </section>
 
     <footer>
         <p>저작권 정보 등...</p>
     </footer>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const categories = document.querySelectorAll('.category-section li');
+        const categories = document.querySelectorAll('.category-section li a');
         const mainImage = document.getElementById('main-image');
         
         categories.forEach((category) => {
