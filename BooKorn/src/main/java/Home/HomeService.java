@@ -21,7 +21,7 @@ public class HomeService {
     }
 
 
-    public List<String> getBooksByCategory(String categoryId) {
+    public List<Book> getBooksByCategory(String categoryId) {
         return homeDAO.getBooksByCategory(categoryId);
     }
 

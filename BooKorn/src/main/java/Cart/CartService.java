@@ -15,5 +15,10 @@ public class CartService {
         
         return cartdao.getCart(user_id);
     }
+    
+    public void deleteCartItem(String userId, String cartItemId) throws SQLException {
+        cartdao.deleteCartitem(userId, cartItemId);
+    }
+
 
 }
