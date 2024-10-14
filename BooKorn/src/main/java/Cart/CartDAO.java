@@ -9,9 +9,9 @@ import java.util.ArrayList;
 
 public class CartDAO {
 	
-	private String url="jdbc:oracle:thin:@localhost:1521:xe";
-	private String user="system";
-	private String password="pass";
+	private String url="jdbc:oracle:thin:@localhost:1521:testdb";
+	private String user="scott";
+	private String password="tiger";
 
 //	public static void main(String[] args) throws SQLException {
 //		getCart("minsoo001");
