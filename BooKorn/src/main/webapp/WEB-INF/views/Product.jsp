@@ -8,14 +8,17 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <link rel="stylesheet" href="css/product.css" type="text/css">
 <style type="text/css">
+ 
    
-   #prodwrap { 
+ 
+	
+	#prodwrap { 
+ 
             max-width: 1000px;
             margin: 0 auto; 
             border: 1px solid #cdcdcd;
             padding: 30px;
-    }
-   
+    } 
    a{
        text-decoration: none;
        font-size: 15px;
@@ -68,34 +71,36 @@
        cursor: pointer; /* 마우스 커서 변경 */
        transition: background-color 0.3s, transform 0.2s; /* 효과 전환 */
    }
-    
+     
 </style>
 </head>
 <body>
 <div id="prodwrap" >
-   <div id="prodinfowrap">
-      <div id="collft">
-         <img src="${prod.product_image }" alt="상세이미지" width="200px">
-      </div>
-      <div id="colrgt">
-         <h2>${prod.product_name }</h2>
-         <p>${prod.product_author } 저 | ${prod. product_company}</p>
-         <h3>평균별점 : ${prod.product_grade *2} </h3>
-         <hr>
-         <h2>판매가 : ${prod.product_price } 원</h2>
-         <div id="btnwrap">
-            <a href="#" class="toCartBtn">카트에 넣기</a>
-            <a href="#" class="tobuyBtn">바로 구매</a>
-         </div>
-      </div>
-   </div>
-   
-      <hr><br>
-      <p>
-         ${prod.product_detail }
-      </p>
-      <br><hr>
-      <div id="reviewwrap">
+ 
+	<div id="prodinfowrap">
+		<div id="collft">
+			<img src="${prod.product_image }" alt="상세이미지" width="200px">
+		</div>
+		<div id="colrgt">
+			<h2>${prod.product_name }</h2>
+			<p>${prod.product_author } 저 | ${prod. product_company}</p>
+			<h3>평균별점 : ${prod.product_grade *2} </h3>
+			<hr>
+			<h2>판매가 : ${prod.product_price } 원</h2>
+			<div id="btnwrap">
+			    <a onclick="addToCart(event)" data-product-id="${prod.product_id}" class="toCartBtn">카트에 넣기</a>
+			    <a href="#" class="tobuyBtn">바로 구매</a>
+			</div>
+		</div>
+	</div>
+	
+		<hr><br>
+		<p>
+			${prod.product_detail }
+		</p>
+		<br><hr>
+		<div id="reviewwrap">
+ 
     <h2>한줄평</h2>
 
     <!-- 한 줄 평 입력 영역 -->
@@ -226,12 +231,13 @@
             }
         });
     }
-   
+ 
     
-    function addToCart() {
+    function addToCart(event) {
+        const productId = event.currentTarget.getAttribute('data-product-id'); // data-product-id에서 상품 ID 가져오기
         const data = new URLSearchParams();
-        data.append('productId', product_id);
-        data.append('quantity', 1);
+        data.append('product_id', productId); // 상품 ID 추가
+ 
 
         fetch('addToCart', {
             method: 'POST',
@@ -239,12 +245,12 @@
         })
         .then(response => {
             if (response.ok) {
-                // 성공적으로 카트에 추가되었을 때
+ 
                 alert('상품이 카트에 추가되었습니다.');
-                // 필요 시 페이지 새로 고침 또는 다른 동작 추가
-                window.location.href = 'cart.jsp'; // 카트 페이지로 이동
+                // 추가 동작이 필요하면 여기에 작성
+                window.location.href = '/BooKorn/cart';
             } else {
-                // 에러 처리
+ 
                 alert('카트에 추가하는 데 실패했습니다.');
             }
         })
@@ -253,7 +259,8 @@
             alert('오류가 발생했습니다.');
         });
     }
-    
+ 
+ 
     
 </script>
 
