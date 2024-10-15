@@ -17,8 +17,8 @@ public class insertCart extends HttpServlet{
    @Override
    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
       
-       //String userId = (String) req.getSession().getAttribute("userId"); // 세션에서 사용자 ID 가져오기
-       String userId = "U001";
+       String userId = (String) req.getSession().getAttribute("userId"); // 세션에서 사용자 ID 가져오기
+//       String userId = "minsoo001";
        
         String productId = req.getParameter("product_id");
         try {

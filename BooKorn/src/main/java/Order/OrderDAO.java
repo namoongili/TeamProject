@@ -35,24 +35,67 @@ public class OrderDAO {
 	}
 
 	public int createOrder(String userId, String cartId, int totalPrice, String memo, String name, String address, String phone) throws SQLException {
-	    Connection con = dbCon();
-	    String orderId = generateOrderId(); // 주문 ID 생성 로직
-	    String sql = "INSERT INTO orders (order_id, user_id, cart_id, total_price, memo, name, address, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+	    Connection con = null;
+	    try {
+	        con = dbCon();
+	        con.setAutoCommit(false); // 트랜잭션 시작
 
-	    try (PreparedStatement pst = con.prepareStatement(sql)) {
-	        pst.setString(1, orderId);
-	        pst.setString(2, userId);
-	        pst.setString(3, cartId);
-	        pst.setInt(4, totalPrice);
-	        pst.setString(5, memo);
-	        pst.setString(6, name);
-	        pst.setString(7, address);
-	        pst.setString(8, phone);
-	        pst.executeUpdate();
+	        String orderId = generateOrderId();
+	        String sqlInsertOrder = "INSERT INTO orders (order_id, user_id, cart_id, total_price, memo, name, address, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+	        try (PreparedStatement pst = con.prepareStatement(sqlInsertOrder)) {
+	            pst.setString(1, orderId);
+	            pst.setString(2, userId);
+	            pst.setString(3, cartId);
+	            pst.setInt(4, totalPrice);
+	            pst.setString(5, memo);
+	            pst.setString(6, name);
+	            pst.setString(7, address);
+	            pst.setString(8, phone);
+	            pst.executeUpdate();
+	        }
+
+	        // 주문 생성 후 장바구니 아이템 삭제
+	        String sqlDeleteCartItems = "DELETE FROM cartitem WHERE cart_id = ?";
+	        try (PreparedStatement pst = con.prepareStatement(sqlDeleteCartItems)) {
+	            pst.setString(1, cartId);
+	            int cartItemRowsDeleted = pst.executeUpdate();
+	            System.out.println("cartitem rows deleted: " + cartItemRowsDeleted);
+	        }
+
+	        // 장바구니 삭제
+	        String sqlDeleteCart = "DELETE FROM cart WHERE cart_id = ?";
+	        try (PreparedStatement pst = con.prepareStatement(sqlDeleteCart)) {
+	            pst.setString(1, cartId);
+	            int cartRowsDeleted = pst.executeUpdate();
+	            System.out.println("cart rows deleted: " + cartRowsDeleted);
+	        }
+
+	        con.commit(); // 트랜잭션 완료
+	        return 1; // 성공적으로 처리된 경우 1 반환
+
+	    } catch (SQLException e) {
+	        if (con != null) {
+	            try {
+	                con.rollback(); // 오류 발생 시 롤백
+	                System.out.println("Transaction rolled back due to an error.");
+	            } catch (SQLException rollbackEx) {
+	                rollbackEx.printStackTrace();
+	            }
+	        }
+	        e.printStackTrace();
+	        throw e;
+	    } finally {
+	        if (con != null) {
+	            try {
+	                con.setAutoCommit(true);
+	                con.close();
+	            } catch (SQLException ex) {
+	                ex.printStackTrace();
+	            }
+	        }
 	    }
-
-	    return 1;
 	}
+
 
 
 	public Order getOrder(String user_id) throws SQLException {

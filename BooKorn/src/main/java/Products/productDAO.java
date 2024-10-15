@@ -6,15 +6,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import Comments.comment;
 
 public class productDAO {
 
 	String driver="oracle.jdbc.driver.OracleDriver";
-	String url="jdbc:oracle:thin:@localhost:1521:testdb";
-	String user="scott";
-	String password="tiger";
+	String url="jdbc:oracle:thin:@localhost:1521:xe";
+	String user="system";
+	String password="pass";
 	
 	
 	private Connection dbCon() {
@@ -36,18 +37,18 @@ public class productDAO {
 		return con;
 	}
 	
-	private void close(AutoCloseable ...a) {
-		
-		for(AutoCloseable item : a) {
-			try {
-				item.close();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-	}
+//	private void close(AutoCloseable ...a) {
+//		
+//		for(AutoCloseable item : a) {
+//			try {
+//				item.close();
+//			} catch (Exception e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+//		
+//	}
 	
 
 	public product selectProduct(String product_id) {
@@ -81,13 +82,15 @@ public class productDAO {
 				
 			}
 			
-			
+			rs.close();
+			con.close();
+			pst.close();
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		close(rs,pst,con);
+		
 		return p;
 	}
 	
@@ -131,12 +134,15 @@ public class productDAO {
 	            );
 	            list.add(cmt);
 	        }
+	        rs.close();
+			con.close();
+			pst.close();
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		close(rs,pst,con);
+		
 		return list ;
 	}
 	
@@ -157,11 +163,15 @@ public class productDAO {
 	        rRow = pst.executeUpdate();
 	        updateCount(newComment.getProduct_id());
 	        updateRate(newComment.getProduct_id());
+	        
+	       
+			con.close();
+			pst.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	    close(pst, con);
+	    
 	    
 		return rRow;
 	}
@@ -177,11 +187,14 @@ public class productDAO {
 			pst = con.prepareStatement(sql);
 			pst.setString(1, product_id);
 			rRow = pst.executeUpdate();
+			con.close();
+			pst.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		close(pst, con);
+		
+		
 		
 		return rRow;
 	}
@@ -198,11 +211,14 @@ public class productDAO {
 			pst.setString(1, product_id);
 			pst.setString(2, product_id);
 			rRow = pst.executeUpdate();
+			
+			con.close();
+			pst.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		close(pst, con);
+
 		
 		return rRow;
 	}
@@ -227,11 +243,14 @@ public class productDAO {
 	        
 	        System.out.println(rRow);
 	        
+	        pstmt.close();
+	        conn.close();
+	        
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	        throw e; // 예외를 다시 던져서 호출자에서 처리
 	    } finally {
-	        close(pstmt, conn); // 자원 정리
+	        
 	    }
 	    
 	    
@@ -243,28 +262,53 @@ public class productDAO {
 	public void addItemToCart(String cartId, String productId) throws SQLException {
 	    Connection conn = null;
 	    PreparedStatement pstmt = null;
+	    ResultSet rs = null;
 
 	    try {
 	        conn = dbCon();
 
-	        String cartitemId = "I" + getNextCartItemId(conn);
-	        int quantity = 1;
-	        System.out.println(cartitemId);
-	        System.out.println(cartId);
-	        System.out.println(productId);
-	        String sqlInsertCartItem = "INSERT INTO cartitem (cartitem_id, cart_id, product_id, quantity) VALUES ( ? , ?,  ? , ?)";
-	        pstmt = conn.prepareStatement(sqlInsertCartItem);
-	        pstmt.setString(1, cartitemId);
-	        pstmt.setString(2, cartId);
-	        pstmt.setString(3, productId);
-	        pstmt.setInt(4, quantity);
-	        pstmt.executeUpdate();
+	        // 카트 안에 해당 제품이 이미 존재하는지 확인
+	        String sqlCheckExistence = "SELECT quantity FROM cartitem WHERE cart_id = ? AND product_id = ?";
+	        pstmt = conn.prepareStatement(sqlCheckExistence);
+	        pstmt.setString(1, cartId);
+	        pstmt.setString(2, productId);
+	        rs = pstmt.executeQuery();
 
+	        // 이미 존재하는 경우 수량을 증가시키거나, 새로운 항목을 추가하지 않음
+	        if (rs.next()) {
+	            // 해당 제품이 이미 카트에 존재함
+	            int currentQuantity = rs.getInt("quantity");
+	            int newQuantity = currentQuantity + 1; // 수량 증가
+	            String sqlUpdateQuantity = "UPDATE cartitem SET quantity = ? WHERE cart_id = ? AND product_id = ?";
+	            pstmt = conn.prepareStatement(sqlUpdateQuantity);
+	            pstmt.setInt(1, newQuantity);
+	            pstmt.setString(2, cartId);
+	            pstmt.setString(3, productId);
+	            pstmt.executeUpdate();
+	        } else {
+	            // 해당 제품이 카트에 존재하지 않음
+	            String cartitemId = "I" + getNextCartItemId(conn);
+	            int quantity = 1;
+	            System.out.println(cartitemId);
+	            System.out.println(cartId);
+	            System.out.println(productId);
+	            String sqlInsertCartItem = "INSERT INTO cartitem (cartitem_id, cart_id, product_id, quantity) VALUES (?, ?, ?, ?)";
+	            pstmt = conn.prepareStatement(sqlInsertCartItem);
+	            pstmt.setString(1, cartitemId);
+	            pstmt.setString(2, cartId);
+	            pstmt.setString(3, productId);
+	            pstmt.setInt(4, quantity);
+	            pstmt.executeUpdate();
+	            
+	            rs.close();
+	            pstmt.close();
+	            conn.close();
+	        }
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	        throw e; // 예외를 다시 던져서 호출자에서 처리
 	    } finally {
-	        close(pstmt, conn); // 자원 정리
+	        
 	    }
 	}
 
@@ -282,7 +326,7 @@ public class productDAO {
 	        conn = dbCon();
 
 	        // 카트 존재 여부 확인
-	        String sqlCheckCart = "SELECT cart_id FROM cart WHERE user_id = 'U001'";
+	        String sqlCheckCart = "SELECT cart_id FROM cart WHERE user_id = 'minsoo001'";
 	        pstmtCart = conn.prepareStatement(sqlCheckCart);
 	      //  pstmtCart.setString(1, userId);
 	        rs = pstmtCart.executeQuery();
@@ -296,51 +340,58 @@ public class productDAO {
 	        	
 	        	System.out.println("생성ㅀㅀㄹ");
 	            cartId = rs.getString("cart_id"); // 기존 카트 ID 가져오기
+	            System.out.println(cartId);
 	        }
 
 
 	        
 	        
 	        addItemToCart(cartId, productId); // 카트에 아이템 추가
+	        
+	        rs.close();
+	        pstmtCart.close();
+	        conn.close();
 
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	        throw e; // 예외를 다시 던져서 호출자에서 처리
 	    } finally {
-	        close(rs, pstmtCart, conn); // 자원 정리
+	        
 	    }
 	}
 
 
-	private int getNextCartId(Connection conn) throws SQLException {
-	    String sql = "SELECT cart_seq.NEXTVAL FROM dual";
-	    try (PreparedStatement pstmt = conn.prepareStatement(sql);
-	         ResultSet rs = pstmt.executeQuery()) {
-	        if (rs.next()) {
-	            return rs.getInt(1);
-	        }
-	    }
-	    throw new SQLException("Failed to retrieve next cart ID");
+	private String getNextCartId(Connection conn) throws SQLException {
+		return UUID.randomUUID().toString().replace("-", "").substring(0, 5);
+//	    String sql = "SELECT cart_seq.NEXTVAL FROM dual";
+//	    try (PreparedStatement pstmt = conn.prepareStatement(sql);
+//	         ResultSet rs = pstmt.executeQuery()) {
+//	        if (rs.next()) {
+//	            return rs.getInt(1);
+//	        }
+//	    }
+//	    throw new SQLException("Failed to retrieve next cart ID");
 	}
 
-	private int getNextCartItemId(Connection conn) throws SQLException {
-	    String sql = "SELECT cartitem_seq.NEXTVAL FROM dual";
-	    try (PreparedStatement pstmt = conn.prepareStatement(sql);
-	         ResultSet rs = pstmt.executeQuery()) {
-	        if (rs.next()) {
-	            return rs.getInt(1);
-	        }
-	    }
-	    throw new SQLException("Failed to retrieve next cart item ID");
+	private String getNextCartItemId(Connection conn) throws SQLException {
+		return UUID.randomUUID().toString().replace("-", "").substring(0, 5);
+//	    String sql = "SELECT cartitem_seq.NEXTVAL FROM dual";
+//	    try (PreparedStatement pstmt = conn.prepareStatement(sql);
+//	         ResultSet rs = pstmt.executeQuery()) {
+//	        if (rs.next()) {
+//	            return rs.getInt(1);
+//	        }
+//	    }
+//	    throw new SQLException("Failed to retrieve next cart item ID");
 	}
 
 	
-	/*
-	public static void main(String[] args) throws SQLException {
-		
-		productDAO dao = new productDAO();
-		dao.addToCart("U001", "P001");
-		
-	}
-	*/
+	
+//	public static void main(String[] args) throws SQLException {
+//		
+//		productDAO dao = new productDAO();
+//		dao.addToCart("minsoo001", "P001");
+//		
+//	}
+	
 }

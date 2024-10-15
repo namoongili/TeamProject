@@ -25,11 +25,13 @@ public class CartServlet extends HttpServlet {
 	@Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
-		session.setAttribute("userId", userId="U001");
+		userId = (String) session.getAttribute("userId");
+		System.out.println(userId);
 		//데이터베이스에 접근, 유저 ID를 검색해서 해당 데이터를 찾아서 해당 유저에 저장된 장바구니를 호출
 		try {
+			System.out.println("getCart전");
 			ArrayList<Cart> cl = getCart(userId);
-			
+			System.out.println("getCart후");
 			request.setAttribute("cartItemsResult", cl);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

@@ -14,7 +14,6 @@ public class CartDAO {
 	private String user = "system";
 	private String password = "pass";
 
-
 //	public static void main(String[] args) throws SQLException {
 //		getCart("minsoo001");
 //	}
@@ -41,6 +40,7 @@ public class CartDAO {
 		// sql실행
 		PreparedStatement pst = null;
 		ResultSet rs = null;
+		
 
 		ArrayList<Cart> list = new ArrayList<Cart>();
 		try {
@@ -91,55 +91,55 @@ public class CartDAO {
 	}
 
 	public void saveCartItems(String userId, ArrayList<Cart> cartItems) throws SQLException {
-        Connection con = dbCon();
-        String cartId = generateCartId();
+		Connection con = dbCon();
+		String cartId = generateCartId();
 
-        try {
-            // 기존 cart와 cartitem 삭제
-            String deleteCartSql = "DELETE FROM cart WHERE user_id = ?";
-            String deleteCartItemsSql = "DELETE FROM cartitem WHERE cart_id IN (SELECT cart_id FROM cart WHERE user_id = ?)";
+		try {
+			// 기존 cart와 cartitem 삭제
+			String deleteCartSql = "DELETE FROM cart WHERE user_id = ?";
+			String deleteCartItemsSql = "DELETE FROM cartitem WHERE cart_id IN (SELECT cart_id FROM cart WHERE user_id = ?)";
 
-            try (PreparedStatement pst1 = con.prepareStatement(deleteCartItemsSql);
-                 PreparedStatement pst2 = con.prepareStatement(deleteCartSql)) {
-                pst1.setString(1, userId);
-                pst1.executeUpdate();
+			try (PreparedStatement pst1 = con.prepareStatement(deleteCartItemsSql);
+					PreparedStatement pst2 = con.prepareStatement(deleteCartSql)) {
+				pst1.setString(1, userId);
+				pst1.executeUpdate();
 
-                pst2.setString(1, userId);
-                pst2.executeUpdate();
-            }
+				pst2.setString(1, userId);
+				pst2.executeUpdate();
+			}
 
-            // 새로운 cart 추가
-            String insertCartSql = "INSERT INTO cart (cart_id, user_id) VALUES (?, ?)";
-            try (PreparedStatement pst = con.prepareStatement(insertCartSql)) {
-                pst.setString(1, cartId);
-                pst.setString(2, userId);
-                pst.executeUpdate();
-            }
+			// 새로운 cart 추가
+			String insertCartSql = "INSERT INTO cart (cart_id, user_id) VALUES (?, ?)";
+			try (PreparedStatement pst = con.prepareStatement(insertCartSql)) {
+				pst.setString(1, cartId);
+				pst.setString(2, userId);
+				pst.executeUpdate();
+			}
 
-            // cartItems 리스트를 순회하며 cartitem 테이블에 데이터 추가
-            String insertCartItemSql = "INSERT INTO cartitem (cartitem_id, cart_id, product_id, quantity) VALUES (?, ?, ?, ?)";
-            try (PreparedStatement pst = con.prepareStatement(insertCartItemSql)) {
-                for (Cart cartItem : cartItems) {
-                    String cartItemId = UUID.randomUUID().toString().replace("-", "").substring(0, 10); // cartitem_id 생성
+			// cartItems 리스트를 순회하며 cartitem 테이블에 데이터 추가
+			String insertCartItemSql = "INSERT INTO cartitem (cartitem_id, cart_id, product_id, quantity) VALUES (?, ?, ?, ?)";
+			try (PreparedStatement pst = con.prepareStatement(insertCartItemSql)) {
+				for (Cart cartItem : cartItems) {
+					String cartItemId = getNextCartId(con) + ""; // cartitem_id
+																	// 생성
 
-                    pst.setString(1, cartItemId);
-                    pst.setString(2, cartId);
-                    pst.setString(3, cartItem.getProduct_id());
-                    pst.setInt(4, cartItem.getQuantity());
+					pst.setString(1, cartItemId);
+					pst.setString(2, cartId);
+					pst.setString(3, cartItem.getProduct_id());
+					pst.setInt(4, cartItem.getQuantity());
 
-                    pst.addBatch(); // Batch 처리
-                }
-                pst.executeBatch(); // 한 번에 실행
-            }
+					pst.addBatch(); // Batch 처리
+				}
+				pst.executeBatch(); // 한 번에 실행
+			}
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw e;
-        } finally {
-            con.close();
-        }
-    }
-
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			con.close();
+		}
+	}
 
 	public int getTotalPrice(String userId) throws SQLException {
 		Connection con = dbCon();
@@ -152,7 +152,7 @@ public class CartDAO {
 		// sql실행
 		PreparedStatement pst = null;
 		ResultSet rs = null;
-		
+
 		int sum = 0;
 
 		try {
@@ -165,7 +165,7 @@ public class CartDAO {
 			while (rs.next()) {
 				int quantity = rs.getInt(4);
 				int price = rs.getInt(7);
-				
+
 				sum += quantity * price;
 
 			}
@@ -181,12 +181,21 @@ public class CartDAO {
 
 		return sum;
 	}
-	
+
 	// cart_id를 생성하는 메서드
-    public String generateCartId() {
-        // UUID를 사용하여 고유한 ID를 생성한 후, 필요한 길이로 잘라서 반환합니다.
-        return UUID.randomUUID().toString().replace("-", "").substring(0, 10);
-    }
+	public String generateCartId() {
+		// UUID를 사용하여 고유한 ID를 생성한 후, 필요한 길이로 잘라서 반환합니다.
+		return UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+
+//        String sql = "SELECT cart_seq.NEXTVAL FROM dual";
+//	    try (PreparedStatement pstmt = conn.prepareStatement(sql);
+//	         ResultSet rs = pstmt.executeQuery()) {
+//	        if (rs.next()) {
+//	            return rs.getInt(1);
+//	        }
+//	    }
+//	    throw new SQLException("Failed to retrieve next cart ID");
+	}
 
 	public String getCartId(String userId) throws SQLException {
 		Connection con = dbCon();
@@ -199,32 +208,41 @@ public class CartDAO {
 		ResultSet rs = null;
 
 		String id = null;
-		
+
 		try {
 			pst = con.prepareStatement(sql);
 
 			pst.setString(1, userId); // ? 자리에 userId 값을 바인딩
 
 			rs = pst.executeQuery();
-			
+
 			while (rs.next()) {
 				id = rs.getString(1);
 
 			}
 
-			
-
 			// 해제
 			pst.close();
 			rs.close();
 			con.close();
-			
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		return id;
+	}
+
+	private String getNextCartId(Connection conn) throws SQLException {
+		return UUID.randomUUID().toString().replace("-", "").substring(0, 5);
+//		String sql = "SELECT cart_seq.NEXTVAL FROM dual";
+//		try (PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
+//			if (rs.next()) {
+//				return rs.getInt(1);
+//			}
+//		}
+//		throw new SQLException("Failed to retrieve next cart ID");
 	}
 
 }

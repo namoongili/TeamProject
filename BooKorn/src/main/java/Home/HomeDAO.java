@@ -9,9 +9,9 @@ import java.util.List;
 
 public class HomeDAO {
 
-    private String url = "jdbc:oracle:thin:@localhost:1521:testdb";
-    private String user = "scott";
-    private String password = "tiger";
+    private String url = "jdbc:oracle:thin:@localhost:1521:xe";
+    private String user = "system";
+    private String password = "pass";
 
     // 데이터베이스 연결
     private Connection dbCon() throws Exception {

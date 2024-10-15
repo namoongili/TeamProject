@@ -57,7 +57,7 @@
                 data: JSON.stringify(orderData),
                 success: function(response) {
                     alert("주문이 완료되었습니다!");
-                    
+                   window.location.href = "/BooKorn/home";
                 },
                 error: function(err) {
                     alert("주문 요청에 실패했습니다.");

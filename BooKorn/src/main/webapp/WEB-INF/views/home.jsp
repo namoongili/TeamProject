@@ -67,13 +67,13 @@
     justify-content: center;
     align-items: center;
     width: 100%; /* 전체 너비를 차지하도록 설정 */
-    max-width: 600px; /* 검색 바의 최대 너비 */
+    max-width: 300px; /* 검색 바의 최대 너비 */
     margin: 0 auto; /* 중앙에 위치하도록 설정 */
 }
 
          .search-bar input {
  		    flex-grow: 1;
-		    max-width: 400px; /* 검색 바의 최대 너비 */
+		    max-width: 200px; /* 검색 바의 최대 너비 */
 		    padding: 10px;
   	  	    border-radius: 20px;
 }
@@ -236,12 +236,12 @@
     <header>
         <!-- 네비게이션 바 -->
         <div class="nav-bar">
-            <a href="?category=CAT001">국내도서</a>
-            <a href="?category=CAT002">외국도서</a>
-            <a href="?category=CAT003">중고도서</a>
-            <a href="?category=CAT004">eBook</a>
+            <a href="?category=DOMESTIC">국내도서</a>
+            <a href="?category=FOREIGN">외국도서</a>
+            <a href="?category=USED">중고도서</a>
+            <a href="?category=EBOOK">eBook</a>
             <a href="?category=CAT005">크레마클럽</a>
-            <a href="?category=CAT006">CD/LP</a>
+            <a href="?category=CD/LP">CD/LP</a>
         </div>
 
         <!-- 검색 바 -->
@@ -267,12 +267,12 @@
         <!-- 카테고리 섹션 -->
         <aside class="category-section">
             <ul>
-                <li><a href="?category=CAT001">국내도서</a></li>
-                <li><a href="?category=CAT002">외국도서</a></li>
-                <li><a href="?category=CAT003">중고샵</a></li>
-                <li><a href="?category=CAT004">eBook</a></li>
+                <li><a href="?category=DOMESTIC">국내도서</a></li>
+                <li><a href="?category=FOREIGN">외국도서</a></li>
+                <li><a href="?category=USED">중고샵</a></li>
+                <li><a href="?category=EBOOK">eBook</a></li>
                 <li><a href="?category=CAT005">크레마클럽</a></li>
-                <li><a href="?category=CAT006">CD/LP</a></li>
+                <li><a href="?category=CD/LP">CD/LP</a></li>
                 <li><a href="?category=CAT007">DVD/BD</a></li>
                 <li><a href="?category=CAT008">문구/GIFT</a></li>
                 <li><a href="?category=CAT009">티켓</a></li>
