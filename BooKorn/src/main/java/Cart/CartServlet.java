@@ -17,7 +17,7 @@ public class CartServlet extends HttpServlet {
 	@Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
-		session.setAttribute("userId", userId="minsoo001");
+		session.setAttribute("userId", userId="U001");
 		//데이터베이스에 접근, 유저 ID를 검색해서 해당 데이터를 찾아서 해당 유저에 저장된 장바구니를 호출
 		try {
 			ArrayList<Cart> cl = getCart(userId);

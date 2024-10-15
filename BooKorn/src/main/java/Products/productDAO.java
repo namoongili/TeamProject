@@ -207,7 +207,140 @@ public class productDAO {
 		return rRow;
 	}
 	
+	public String createCart(String userId) throws SQLException {
+	    Connection conn = null;
+	    PreparedStatement pstmt = null;
+	    String cartId = null;
+	    int rRow = 0;
+	    System.out.println(userId);
+	    try {
+	        conn = dbCon();
+
+	        // 시퀀스를 사용하여 cart_id 생성
+	        cartId = "c" + getNextCartId(conn);
+
+	        String sqlInsertCart = "INSERT INTO cart (cart_id, user_id) VALUES (?, ?)";
+	        pstmt = conn.prepareStatement(sqlInsertCart);
+	        pstmt.setString(1, cartId);
+	        pstmt.setString(2, userId);
+	        rRow = pstmt.executeUpdate();
+	        
+	        System.out.println(rRow);
+	        
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        throw e; // 예외를 다시 던져서 호출자에서 처리
+	    } finally {
+	        close(pstmt, conn); // 자원 정리
+	    }
+	    
+	    
+	    
+	    return cartId; // 생성된 cart_id 반환
+	}
+
+
+	public void addItemToCart(String cartId, String productId) throws SQLException {
+	    Connection conn = null;
+	    PreparedStatement pstmt = null;
+
+	    try {
+	        conn = dbCon();
+
+	        String cartitemId = "I" + getNextCartItemId(conn);
+	        int quantity = 1;
+	        System.out.println(cartitemId);
+	        System.out.println(cartId);
+	        System.out.println(productId);
+	        String sqlInsertCartItem = "INSERT INTO cartitem (cartitem_id, cart_id, product_id, quantity) VALUES ( ? , ?,  ? , ?)";
+	        pstmt = conn.prepareStatement(sqlInsertCartItem);
+	        pstmt.setString(1, cartitemId);
+	        pstmt.setString(2, cartId);
+	        pstmt.setString(3, productId);
+	        pstmt.setInt(4, quantity);
+	        pstmt.executeUpdate();
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        throw e; // 예외를 다시 던져서 호출자에서 처리
+	    } finally {
+	        close(pstmt, conn); // 자원 정리
+	    }
+	}
+
+
+	public void addToCart(String userId, String productId) throws SQLException {
+	    Connection conn = null;
+	    PreparedStatement pstmtCart = null;
+	    ResultSet rs = null;
+
+	    String cartId = null;
+	    System.out.println(userId);
+	    System.out.println(productId);
+	    
+	    try {
+	        conn = dbCon();
+
+	        // 카트 존재 여부 확인
+	        String sqlCheckCart = "SELECT cart_id FROM cart WHERE user_id = 'U001'";
+	        pstmtCart = conn.prepareStatement(sqlCheckCart);
+	      //  pstmtCart.setString(1, userId);
+	        rs = pstmtCart.executeQuery();
+
+	        // 카트가 없으면 새로 생성
+	        
+	        if (!rs.next()) {
+	        	System.out.println("생성");
+	            cartId = createCart(userId); // 카트 생성
+	        } else {
+	        	
+	        	System.out.println("생성ㅀㅀㄹ");
+	            cartId = rs.getString("cart_id"); // 기존 카트 ID 가져오기
+	        }
+
+
+	        
+	        
+	        addItemToCart(cartId, productId); // 카트에 아이템 추가
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        throw e; // 예외를 다시 던져서 호출자에서 처리
+	    } finally {
+	        close(rs, pstmtCart, conn); // 자원 정리
+	    }
+	}
+
+
+	private int getNextCartId(Connection conn) throws SQLException {
+	    String sql = "SELECT cart_seq.NEXTVAL FROM dual";
+	    try (PreparedStatement pstmt = conn.prepareStatement(sql);
+	         ResultSet rs = pstmt.executeQuery()) {
+	        if (rs.next()) {
+	            return rs.getInt(1);
+	        }
+	    }
+	    throw new SQLException("Failed to retrieve next cart ID");
+	}
+
+	private int getNextCartItemId(Connection conn) throws SQLException {
+	    String sql = "SELECT cartitem_seq.NEXTVAL FROM dual";
+	    try (PreparedStatement pstmt = conn.prepareStatement(sql);
+	         ResultSet rs = pstmt.executeQuery()) {
+	        if (rs.next()) {
+	            return rs.getInt(1);
+	        }
+	    }
+	    throw new SQLException("Failed to retrieve next cart item ID");
+	}
+
 	
-	
-	
+	/*
+	public static void main(String[] args) throws SQLException {
+		
+		productDAO dao = new productDAO();
+		dao.addToCart("U001", "P001");
+		
+	}
+	*/
 }

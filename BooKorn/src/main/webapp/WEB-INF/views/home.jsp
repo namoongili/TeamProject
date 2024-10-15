@@ -20,10 +20,9 @@
     <link rel="stylesheet" href="/BooKorn/css/styles.css">
 
     <style>
-        /* 기본 스타일 */
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
+            margin: 0 auto;
             padding: 0;
             box-sizing: border-box;
         }
@@ -33,16 +32,18 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 40px;
+            padding: 15px;
             background-color: #fff;
             border-bottom: 1px solid #e0e0e0;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+			width: 98.5%;
+			overflow: hidden;
         }
 
         /* 내비게이션 메뉴 */
         .nav-bar {
             display: flex;
-            gap: 20px;
+            gap: 10px;
         }
 
         .nav-bar a {
@@ -60,23 +61,21 @@
         }
 
         /* 검색 바 */
-        .search-bar {
-            display: flex;
-            align-items: center;
-            border: 1px solid #ccc;
-            border-radius: 50px;
-            padding: 5px 15px;
-            flex-grow: 1;
-            max-width: 500px;
-        }
+		.search-bar {
+ 	    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%; /* 전체 너비를 차지하도록 설정 */
+    max-width: 600px; /* 검색 바의 최대 너비 */
+    margin: 0 auto; /* 중앙에 위치하도록 설정 */
+}
 
-        .search-bar input {
-            border: none;
-            outline: none;
-            padding: 10px;
-            width: 100%;
-            border-radius: 20px;
-        }
+         .search-bar input {
+ 		    flex-grow: 1;
+		    max-width: 400px; /* 검색 바의 최대 너비 */
+		    padding: 10px;
+  	  	    border-radius: 20px;
+}
 
         .search-bar button {
             background-color: #007BFF;
@@ -96,7 +95,8 @@
         .user-menu {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 10px;
+            margin-left: auto; /* 유저 메뉴를 오른쪽 끝으로 보내기 위한 설정 */
         }
 
         .user-menu a {
@@ -127,6 +127,7 @@
             background-color: #f8f8f8;
             border-radius: 10px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 100px;
         }
 
         .category-section ul {
@@ -191,24 +192,32 @@
             text-align: left;
         }
 
-        /* 책 목록을 위한 스타일 추가 */
-        .book-container {
-            display: flex;
-            justify-content: space-between;
-            gap: 20px;
-            margin-top: 30px;
-            flex-wrap: wrap;
-            width: 100%;
-        }
+     
+       .book-container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-top: 30px;
+    width: 100%;
+    text-align: center;
+    clear: both; /* 이전 섹션과의 간섭을 없앱니다 */
+}
 
-        .book-box {
-            background-color: #f8f8f8;
-            border-radius: 10px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            width: 15%;  /* 너비를 더 줄여서 다섯 개가 한 줄에 들어가도록 설정 */
-            text-align: center;
-        }
+.book-box {
+    background-color: #f8f8f8;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 200px; /* 각 책 박스의 너비 */
+    margin: 10px; /* 박스 간 간격 */
+}
+    
+    .book-container:after {
+        content: "";
+        display: block;
+        clear: both;
+    }
+    
 
         /* 푸터 스타일 */
         footer {
@@ -271,38 +280,51 @@
 
         <!-- 중앙 이미지 섹션 -->
         <div class="center-section">
-            <h2>오늘의 책</h2>
-            <div class="book-highlight">
-                <div class="book-image">
-                    <img src="/BooKorn/imgs/홈화면/모두의금리.jpg" alt="모두의 금리">
-                </div>
-                <div class="book-description">
-                    <h3><%= request.getAttribute("todayBook") %></h3>
-                    <p>경제의 중심에는 금리가 있다. 국제금융 최전선에서 활약한 조원경 저자의 신간.</p>
-                    <p><strong>저자: </strong>조원경</p>
-                    <p><strong>가격: </strong>19,800원 (10% 할인)</p>
-                </div>
-            </div>
-
-            <!-- 카테고리별 책 목록 -->
-            <div class="book-container">
-                <% if (categoryBooks != null && !categoryBooks.isEmpty()) { %>
-                    <% for (Book book : categoryBooks) { %>
-                        <div class="book-box">
-                            <h3><%= book.getName() %></h3>
-                            <p><%= book.getAuthor() %></p>
-                            <strong><%= book.getDescription() %></strong>
-                        </div>
-                    <% } %>
-                <% } else { %>
-                    <p>해당 카테고리에 책이 없습니다.</p>
-                <% } %>
-            </div>
+    <h2>오늘의 책</h2>
+    <div class="book-highlight">
+        <div class="book-image">
+            <img src="/BooKorn/imgs/홈화면/모두의금리.jpg" alt="모두의 금리">
         </div>
+        <div class="book-description">
+            <h3><%= request.getAttribute("todayBook") %></h3>
+            <p>경제의 중심에는 금리가 있다. 국제금융 최전선에서 활약한 조원경 저자의 신간.</p>
+            <p><strong>저자: </strong>조원경</p>
+            <p><strong>가격: </strong>19,800원 (10% 할인)</p>
+        </div>
+    </div>
+
+
+               <!-- 책 목록을 출력할 부분 -->
+    <div class="book-container">
+        <% if (categoryBooks != null && !categoryBooks.isEmpty()) { %>
+            <% for (Book book : categoryBooks) { %>
+                <div class="book-box" onclick="location.href='/BooKorn/product?id=<%= book.getProduct_id() %>'">
+                    <h3><%= book.getName() %></h3>
+                    <p><%= book.getAuthor() %></p>
+                    <strong><%= book.getDescription() %></strong>
+                </div>
+            <% } %>
+        <% } else { %>
+            <p>해당 카테고리에 책이 없습니다.</p>
+        <% } %>
+    </div>
+    </div>
     </section>
 
     <footer>
-        <p>저작권 정보 등...</p>
+
     </footer>
 </body>
+<script>
+   let bookDiv = document.queryselectorAll(".book-box");
+   
+   bookDiv.forEach("book"=>{
+      book.addtouchlistener("click",function(){
+         
+      })
+   }){
+      
+   }
+
+</script>
 </html>

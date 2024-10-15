@@ -22,7 +22,7 @@ public class HomeDAO {
     // 카테고리별 책 목록 가져오기 (Book 객체로 반환)
     public List<Book> getBooksByCategory(String categoryId) {
         List<Book> books = new ArrayList<>();
-        String sql = "SELECT product_name, product_author, product_detail FROM products WHERE category_id = ?";
+        String sql = "SELECT product_name, product_author, product_detail, product_id FROM products WHERE category_id = ?";
 
         try (Connection con = dbCon();
              PreparedStatement pst = con.prepareStatement(sql)) {
@@ -34,7 +34,8 @@ public class HomeDAO {
                 String name = rs.getString("product_name");
                 String author = rs.getString("product_author");
                 String description = rs.getString("product_detail");
-                books.add(new Book(name, author, description));
+                String product_id = rs.getString("product_id");
+                books.add(new Book(name, author, description, product_id));
             }
 
         } catch (Exception e) {
@@ -145,4 +146,4 @@ public class HomeDAO {
         return myPageInfo;
     }
 }
-	
+   

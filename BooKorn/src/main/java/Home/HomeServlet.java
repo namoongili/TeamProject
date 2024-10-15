@@ -21,13 +21,16 @@ public class HomeServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    	/*
+       
         // 세션에서 사용자 정보 가져오기
         HttpSession session = req.getSession();
         String userId = (String) session.getAttribute("userId");
 
         // 오늘의 책, 베스트셀러 정보
-        String todayBook = homeService.getTodayBook();
+        String
+        todayBook = homeService.getTodayBook();
+        req.setAttribute("todayBook", todayBook);
+        
         List<String> bestSellers = homeService.getBestSellers();
 
         // 카테고리 가져오기
@@ -46,7 +49,6 @@ public class HomeServlet extends HttpServlet {
             myPageInfo = homeService.getMyPageInfo(userId);
             cartItems = homeService.getCartItems(userId);
         }
-
         // JSP로 전달할 값 설정
         req.setAttribute("todayBook", todayBook);
         req.setAttribute("bestSellers", bestSellers);
@@ -56,7 +58,7 @@ public class HomeServlet extends HttpServlet {
         req.setAttribute("myPageInfo", myPageInfo);
         req.setAttribute("cartItems", cartItems);
  
-        */
+        
 
  
 
