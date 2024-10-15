@@ -6,10 +6,10 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<link rel="stylesheet" href="/BooKorn/css/product.css" type="text/css">
+<link rel="stylesheet" href="css/product.css" type="text/css">
 <style type="text/css">
-
-	 #prodwrap { 
+	
+	#prodwrap { 
             max-width: 1000px;
             margin: 0 auto; 
             border: 1px solid #cdcdcd;
@@ -24,7 +24,7 @@
 	
 	.pag{
 	    margin: 10px;
-	    width: 30px;
+	   	padding : 5px;
 	    color: #9e9e9e;
 	}
 	
@@ -32,6 +32,7 @@
 	    margin: 10px;
 	    width: 30px;
 	    font-size: 18px;
+	    
 	}
 	
 	#prodinfowrap{
@@ -47,6 +48,7 @@
 		color: white; 
 		text-decoration: none; 
 		border-radius: 5px;
+		cursor: pointer;
 	}
 	.tobuyBtn{
 		display: inline-block; 
@@ -67,7 +69,7 @@
 	    cursor: pointer; /* 마우스 커서 변경 */
 	    transition: background-color 0.3s, transform 0.2s; /* 효과 전환 */
 	}
-
+	 
 </style>
 </head>
 <body>
@@ -83,17 +85,17 @@
 			<hr>
 			<h2>판매가 : ${prod.product_price } 원</h2>
 			<div id="btnwrap">
-				<a href="#" class="toCartBtn">카트에 넣기</a>
-				<a href="#" class="tobuyBtn">바로 구매</a>
+			    <a onclick="addToCart(event)" data-product-id="${prod.product_id}" class="toCartBtn">카트에 넣기</a>
+			    <a href="#" class="tobuyBtn">바로 구매</a>
 			</div>
 		</div>
 	</div>
 	
-		<hr>
+		<hr><br>
 		<p>
 			${prod.product_detail }
 		</p>
-		<hr>
+		<br><hr>
 		<div id="reviewwrap">
     <h2>한줄평</h2>
 
@@ -134,6 +136,8 @@
     var product_id = $('#product_id').val();
     
     var firstLoad = true;
+    
+    
 
     // 한 줄 평 리스트와 페이징을 불러오는 함수
     function loadReviews(page) {
@@ -224,6 +228,35 @@
         });
     }
 	
+    
+    function addToCart(event) {
+        const productId = event.currentTarget.getAttribute('data-product-id'); // data-product-id에서 상품 ID 가져오기
+        const data = new URLSearchParams();
+        data.append('product_id', productId); // 상품 ID 추가
+
+        fetch('addToCart', {
+            method: 'POST',
+            body: data
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('상품이 카트에 추가되었습니다.');
+                // 추가 동작이 필요하면 여기에 작성
+                window.location.href = '/BooKorn/cart';
+            } else {
+                alert('카트에 추가하는 데 실패했습니다.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('오류가 발생했습니다.');
+        });
+    }
+
+
+
+    
+    
 </script>
 
 </body>
