@@ -21,20 +21,25 @@ public class HomeServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+ 
         // 세션에서 사용자 정보 가져오기
         HttpSession session = req.getSession();
         String userId = (String) session.getAttribute("userId");
 
         // 오늘의 책, 베스트셀러 정보
-        String todayBook = homeService.getTodayBook();
+        String
+        todayBook = homeService.getTodayBook();
+        req.setAttribute("todayBook", todayBook);
+        
         List<String> bestSellers = homeService.getBestSellers();
 
         // 카테고리 가져오기
         String selectedCategory = req.getParameter("category");
         if (selectedCategory == null) {
-            selectedCategory = "국내도서";
+            selectedCategory = "CAT001"; // '국내도서'의 카테고리 ID
         }
-        List<String> categoryBooks = homeService.getBooksByCategory(selectedCategory);
+        // 선택된 카테고리에 해당하는 책 목록 가져오기
+        List<Book> categoryBooks = homeService.getBooksByCategory(selectedCategory);
 
         // 로그인 처리
         boolean isLoggedIn = userId != null;
@@ -44,17 +49,21 @@ public class HomeServlet extends HttpServlet {
             myPageInfo = homeService.getMyPageInfo(userId);
             cartItems = homeService.getCartItems(userId);
         }
-
-
+        // JSP로 전달할 값 설정
         req.setAttribute("todayBook", todayBook);
         req.setAttribute("bestSellers", bestSellers);
-        req.setAttribute("categoryBooks", categoryBooks);
-        req.setAttribute("selectedCategory", selectedCategory);
+        req.setAttribute("categoryBooks", categoryBooks);  // 여기서 categoryBooks 전달
+        req.setAttribute("selectedCategory", selectedCategory);  // selectedCategory 전달
         req.setAttribute("isLoggedIn", isLoggedIn);
         req.setAttribute("myPageInfo", myPageInfo);
         req.setAttribute("cartItems", cartItems);
+ 
+        
 
+ 
 
+        // JSP로 이동
+ 
         req.getRequestDispatcher("WEB-INF/views/home.jsp").forward(req, resp);
     }
 }

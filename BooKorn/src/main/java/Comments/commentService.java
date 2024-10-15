@@ -20,4 +20,9 @@ public class commentService {
 		return list;
 	}
 	
+	public int insertComment(comment newComment) {
+		int result = dao.insertComment(newComment);
+		
+		return result;
+	}
 }

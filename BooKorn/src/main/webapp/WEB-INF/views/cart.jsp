@@ -30,6 +30,7 @@ td {
 
 	<div class="main">
 		<table class="list">
+		
 			<thead>
 				<tr>
 					<th>책이름</th>

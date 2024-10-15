@@ -56,16 +56,7 @@ public class comment {
 		this.product_id = product_id;
 	}
 	public String getUser_id() {
-	    if (user_id == null || user_id.length() == 0) {
-	        return ""; // 기본값 처리
-	    }
-	    StringBuilder maskedId = new StringBuilder();
-	    maskedId.append(user_id.charAt(0)); // 첫 글자 추가
-
-	    for (int i = 1; i < user_id.length(); i++) {
-	        maskedId.append('*'); // 나머지 글자는 *
-	    }
-	    return maskedId.toString(); // 필터링된 user_id 반환
+	    return this.user_id;
 	}
 	public void setUser_id(String user_id) {
 		this.user_id = user_id;
