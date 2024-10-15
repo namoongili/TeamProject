@@ -21,7 +21,7 @@ public class HomeServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    	/*
+    	
         // 세션에서 사용자 정보 가져오기
         HttpSession session = req.getSession();
         String userId = (String) session.getAttribute("userId");
@@ -56,7 +56,7 @@ public class HomeServlet extends HttpServlet {
         req.setAttribute("myPageInfo", myPageInfo);
         req.setAttribute("cartItems", cartItems);
  
-        */
+        
 
  
 
