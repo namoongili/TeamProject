@@ -68,7 +68,8 @@ td {
 		<div>
 			개수: <span id="sum"></span> 총가격: <span id="totalPrice"></span>
 		</div>
-		<button>주문하기</button>
+		<button onclick="sendOrder()">주문하기</button>
+
 	</div>
 
 </body>
@@ -99,6 +100,50 @@ td {
         sumElement.textContent = sum;
         totalPriceElement.textContent = totalPrice.toLocaleString(); // 숫자를 천단위 콤마로 포맷팅
     }
+    
+    
+    function sendOrder() {
+        const orderDetails = {
+            userId: 'minsoo001', // 현재 사용자 ID
+            cartItems: [] // 장바구니 아이템을 담을 배열
+        };
+
+        // 각 아이템의 productId와 quantity를 orderDetails에 추가
+        $(".quantity").each(function() {
+            const quantity = parseInt($(this).val(), 10);
+            const productId = $(this).closest('tr').data('product-id');
+
+            if (!isNaN(quantity) && quantity > 0) {
+                orderDetails.cartItems.push({
+                    productId: productId,
+                    quantity: quantity
+                });
+            }
+        });
+
+        console.log("주문 상세 정보:", orderDetails); // 전송 전 확인을 위한 로그
+
+        // AJAX 요청으로 주문 정보 전송
+        $.ajax({
+            type: "POST",
+            url: "/BooKorn/cart",
+            contentType: "application/json",
+            data: JSON.stringify(orderDetails),
+            success: function(response) {
+                window.location.href = "/BooKorn/order"; // 주문 완료 후 이동할 URL
+            },
+            error: function(err) {
+                alert("주문 요청에 실패했습니다.");
+                console.error("Error:", err);
+            }
+        });
+    }
+
+    
+
+
+
+    
         
     
 
