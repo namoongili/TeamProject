@@ -11,6 +11,7 @@
     String myPageInfo = (String) request.getAttribute("myPageInfo");
     List<Book> categoryBooks = (List<Book>) request.getAttribute("categoryBooks");
     String selectedCategory = (String) request.getAttribute("selectedCategory");
+    Book todayBook = (Book) request.getAttribute("todayBook");
 %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -278,16 +279,16 @@ footer {
 			<h2>오늘의 책</h2>
 			<div class="book-highlight">
 				<div class="book-image">
-					<img src="/BooKorn/imgs/홈화면/모두의금리.jpg" alt="모두의 금리">
+					<img src=<%= todayBook.getImage() %> alt="모두의 금리">
 				</div>
 				<div class="book-description">
-					<h3><%= request.getAttribute("todayBook") %></h3>
-					<p>경제의 중심에는 금리가 있다. 국제금융 최전선에서 활약한 조원경 저자의 신간.</p>
+					<h3><%= todayBook.getName() %></h3>
+					<p><%= todayBook.getDescription() %></p>
 					<p>
-						<strong>저자: </strong>조원경
+						<strong>저자: </strong><%= todayBook.getAuthor() %>
 					</p>
 					<p>
-						<strong>가격: </strong>19,800원 (10% 할인)
+						<strong>가격: </strong><%= todayBook.getPrice() %>
 					</p>
 				</div>
 			</div>

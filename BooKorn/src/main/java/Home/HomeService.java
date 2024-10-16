@@ -11,7 +11,7 @@ public class HomeService {
     }
 
 
-    public String getTodayBook() {
+    public Book getTodayBook() {
         return homeDAO.getTodayBook();
     }
 
