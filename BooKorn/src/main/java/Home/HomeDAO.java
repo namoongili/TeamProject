@@ -9,141 +9,140 @@ import java.util.List;
 
 public class HomeDAO {
 
-    private String url = "jdbc:oracle:thin:@localhost:1521:testdb";
-    private String user = "scott";
-    private String password = "tiger";
+	private String url = "jdbc:oracle:thin:@localhost:1521:xe";
+	private String user = "system";
+	private String password = "pass";
 
-    // 데이터베이스 연결
-    private Connection dbCon() throws Exception {
-        Class.forName("oracle.jdbc.driver.OracleDriver");
-        return DriverManager.getConnection(url, user, password);
-    }
+	// 데이터베이스 연결
+	private Connection dbCon() throws Exception {
+		Class.forName("oracle.jdbc.driver.OracleDriver");
+		return DriverManager.getConnection(url, user, password);
+	}
 
-    // 카테고리별 책 목록 가져오기 (Book 객체로 반환)
-    public List<Book> getBooksByCategory(String categoryId) {
-        List<Book> books = new ArrayList<>();
-        String sql = "SELECT product_name, product_author, product_detail, product_id FROM products WHERE category_id = ?";
+	// 카테고리별 책 목록 가져오기 (Book 객체로 반환)
+	public List<Book> getBooksByCategory(String categoryId) {
+		List<Book> books = new ArrayList<>();
+		String sql = "SELECT product_name, product_author, product_detail, product_id FROM products WHERE category_id = ?";
 
-        try (Connection con = dbCon();
-             PreparedStatement pst = con.prepareStatement(sql)) {
+		try (Connection con = dbCon(); PreparedStatement pst = con.prepareStatement(sql)) {
 
-            pst.setString(1, categoryId);
-            ResultSet rs = pst.executeQuery();
+			pst.setString(1, categoryId);
+			ResultSet rs = pst.executeQuery();
 
-            while (rs.next()) {
-                String name = rs.getString("product_name");
-                String author = rs.getString("product_author");
-                String description = rs.getString("product_detail");
-                String product_id = rs.getString("product_id");
-                books.add(new Book(name, author, description, product_id));
-            }
+			while (rs.next()) {
+				String name = rs.getString("product_name");
+				String author = rs.getString("product_author");
+				String description = rs.getString("product_detail");
+				String product_id = rs.getString("product_id");
+				books.add(new Book(name, author, description, product_id));
+			}
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return books;
-    }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return books;
+	}
 
-    // 오늘의 책 가져오기
-    public String getTodayBook() {
-        String todayBook = null;
-        String sql = "SELECT product_name FROM products WHERE product_id = 'P001'";  // 예시 쿼리
+	// 오늘의 책 가져오기
+	public String getTodayBook() {
+		String todayBook = null;
+		//String sql = "SELECT product_name FROM products WHERE product_id = 'P001'";  // 예시 쿼리
 
-        try (Connection con = dbCon();
-             PreparedStatement pst = con.prepareStatement(sql);
-             ResultSet rs = pst.executeQuery()) {
+		// 랜덤으로 하나의 책을 선택
+		String sql = "SELECT product_name FROM products ORDER BY DBMS_RANDOM.VALUE FETCH FIRST 1 ROWS ONLY"; // Oracle
+																												// DB 예시
 
-            if (rs.next()) {
-                todayBook = rs.getString("product_name");
-            }
+		try (Connection con = dbCon();
+				PreparedStatement pst = con.prepareStatement(sql);
+				ResultSet rs = pst.executeQuery()) {
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return todayBook;
-    }
+			if (rs.next()) {
+				todayBook = rs.getString("product_name");
+			}
 
-    // 베스트셀러 목록 가져오기
-    public List<String> getBestSellers() {
-        List<String> bestSellers = new ArrayList<>();
-        String sql = "SELECT product_name FROM products ORDER BY sales DESC FETCH FIRST 5 ROWS ONLY";  // 예시 쿼리
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return todayBook;
+	}
 
-        try (Connection con = dbCon();
-             PreparedStatement pst = con.prepareStatement(sql);
-             ResultSet rs = pst.executeQuery()) {
+	// 베스트셀러 목록 가져오기
+	public List<String> getBestSellers() {
+		List<String> bestSellers = new ArrayList<>();
+		String sql = "SELECT product_name FROM products ORDER BY sales DESC FETCH FIRST 5 ROWS ONLY"; // 예시 쿼리
 
-            while (rs.next()) {
-                bestSellers.add(rs.getString("product_name"));
-            }
+		try (Connection con = dbCon();
+				PreparedStatement pst = con.prepareStatement(sql);
+				ResultSet rs = pst.executeQuery()) {
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return bestSellers;
-    }
+			while (rs.next()) {
+				bestSellers.add(rs.getString("product_name"));
+			}
 
-    // 사용자 로그인 처리
-    public boolean login(String userId, String password) {
-        boolean isValidUser = false;
-        String sql = "SELECT * FROM users WHERE user_id = ? AND password = ?";
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return bestSellers;
+	}
 
-        try (Connection con = dbCon();
-             PreparedStatement pst = con.prepareStatement(sql)) {
+	// 사용자 로그인 처리
+	public boolean login(String userId, String password) {
+		boolean isValidUser = false;
+		String sql = "SELECT * FROM users WHERE user_id = ? AND password = ?";
 
-            pst.setString(1, userId);
-            pst.setString(2, password);
-            ResultSet rs = pst.executeQuery();
+		try (Connection con = dbCon(); PreparedStatement pst = con.prepareStatement(sql)) {
 
-            if (rs.next()) {
-                isValidUser = true;
-            }
+			pst.setString(1, userId);
+			pst.setString(2, password);
+			ResultSet rs = pst.executeQuery();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return isValidUser;
-    }
+			if (rs.next()) {
+				isValidUser = true;
+			}
 
-    // 장바구니 목록 가져오기
-    public List<String> getCartItems(String userId) {
-        List<String> cartItems = new ArrayList<>();
-        String sql = "SELECT product_name FROM cart JOIN products ON cart.product_id = products.product_id WHERE user_id = ?";
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return isValidUser;
+	}
 
-        try (Connection con = dbCon();
-             PreparedStatement pst = con.prepareStatement(sql)) {
+	// 장바구니 목록 가져오기
+	public List<String> getCartItems(String userId) {
+		List<String> cartItems = new ArrayList<>();
+		String sql = "SELECT product_name FROM cart JOIN products ON cart.product_id = products.product_id WHERE user_id = ?";
 
-            pst.setString(1, userId);
-            ResultSet rs = pst.executeQuery();
+		try (Connection con = dbCon(); PreparedStatement pst = con.prepareStatement(sql)) {
 
-            while (rs.next()) {
-                cartItems.add(rs.getString("product_name"));
-            }
+			pst.setString(1, userId);
+			ResultSet rs = pst.executeQuery();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return cartItems;
-    }
+			while (rs.next()) {
+				cartItems.add(rs.getString("product_name"));
+			}
 
-    // 마이페이지 정보 가져오기
-    public String getMyPageInfo(String userId) {
-        String myPageInfo = null;
-        String sql = "SELECT * FROM users WHERE user_id = ?";
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return cartItems;
+	}
 
-        try (Connection con = dbCon();
-             PreparedStatement pst = con.prepareStatement(sql)) {
+	// 마이페이지 정보 가져오기
+	public String getMyPageInfo(String userId) {
+		String myPageInfo = null;
+		String sql = "SELECT * FROM users WHERE user_id = ?";
 
-            pst.setString(1, userId);
-            ResultSet rs = pst.executeQuery();
+		try (Connection con = dbCon(); PreparedStatement pst = con.prepareStatement(sql)) {
 
-            if (rs.next()) {
-                myPageInfo = "Username: " + rs.getString("username") + ", Email: " + rs.getString("email");
-            }
+			pst.setString(1, userId);
+			ResultSet rs = pst.executeQuery();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return myPageInfo;
-    }
+			if (rs.next()) {
+				myPageInfo = "Username: " + rs.getString("username") + ", Email: " + rs.getString("email");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return myPageInfo;
+	}
 }
-   

@@ -14,8 +14,8 @@ public class insertComment extends HttpServlet{
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		//String userId = (String) req.getSession().getAttribute("user_id");
-		String userId = "U001";
+		String userId = (String) req.getSession().getAttribute("userId");
+		
 		/*
 	    if (userId != null) {
 	        // user_id가 있는 경우, 필요한 로직 수행

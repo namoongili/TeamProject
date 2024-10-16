@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 public class HomeServlet extends HttpServlet {
 
     private HomeService homeService;
+    public String userId;
 
     @Override
     public void init() throws ServletException {
@@ -24,6 +25,8 @@ public class HomeServlet extends HttpServlet {
  
         // 세션에서 사용자 정보 가져오기
         HttpSession session = req.getSession();
+        
+        session.setAttribute("userId", "minsoo001");
         String userId = (String) session.getAttribute("userId");
 
         // 오늘의 책, 베스트셀러 정보
@@ -36,7 +39,7 @@ public class HomeServlet extends HttpServlet {
         // 카테고리 가져오기
         String selectedCategory = req.getParameter("category");
         if (selectedCategory == null) {
-            selectedCategory = "CAT001"; // '국내도서'의 카테고리 ID
+            selectedCategory = "DOMESTIC"; // '국내도서'의 카테고리 ID
         }
         // 선택된 카테고리에 해당하는 책 목록 가져오기
         List<Book> categoryBooks = homeService.getBooksByCategory(selectedCategory);

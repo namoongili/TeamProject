@@ -2,7 +2,7 @@ package Cart;
 
 public class Cart {
 
-	
+	String cart_id;
 	int quantity;
 	String product_name;
 	String product_detail;
@@ -10,16 +10,35 @@ public class Cart {
 	String product_id;
 	
 
-	public Cart(int quantity, String product_name, String product_detail, int product_price, String product_id) {
+	public Cart(String cart_id, int quantity, String product_name, String product_detail, int product_price, String product_id) {
 		super();
+		this.cart_id = cart_id;
 		this.quantity = quantity;
 		this.product_name = product_name;
 		this.product_detail = product_detail;
 		this.product_price = product_price;
 		this.product_id = product_id;
 	}
+	public Cart(String product_id, int quantity) {
+		super();
+		this.product_id = product_id;
+		this.quantity = quantity;
+	}
 
 	
+	
+	public String getCart_id() {
+		return cart_id;
+	}
+
+
+
+	public void setCart_id(String cart_id) {
+		this.cart_id = cart_id;
+	}
+
+
+
 	public int getQuantity() {
 		return quantity;
 	}
@@ -67,11 +86,16 @@ public class Cart {
 	}
 
 
+
 	@Override
 	public String toString() {
-		return "Cart [quantity=" + quantity + ", product_name=" + product_name + ", product_detail=" + product_detail
-				+ ", product_price=" + product_price + ", product_id=" + product_id + "]";
+		return "Cart [cart_id=" + cart_id + ", quantity=" + quantity + ", product_name=" + product_name
+				+ ", product_detail=" + product_detail + ", product_price=" + product_price + ", product_id="
+				+ product_id + "]";
 	}
+
+
+	
 
 
 	

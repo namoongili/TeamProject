@@ -248,7 +248,7 @@
  
                 alert('상품이 카트에 추가되었습니다.');
                 // 추가 동작이 필요하면 여기에 작성
-                window.location.href = '/BooKorn/cart';
+                window.location.href = '/BooKorn/home';
             } else {
  
                 alert('카트에 추가하는 데 실패했습니다.');
