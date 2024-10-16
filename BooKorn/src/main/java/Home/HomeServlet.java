@@ -26,8 +26,8 @@ public class HomeServlet extends HttpServlet {
         // 세션에서 사용자 정보 가져오기
         HttpSession session = req.getSession();
         
-        session.setAttribute("userId", "minsoo001");
         String userId = (String) session.getAttribute("userId");
+        System.out.println(userId);
 
         // 오늘의 책, 베스트셀러 정보
         String
