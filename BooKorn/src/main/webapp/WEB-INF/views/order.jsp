@@ -222,8 +222,7 @@ footer {
         function submitOrder() {
             const orderData = {
                 userId: '<%=session.getAttribute("userId")%>', // 세션에서 가져온 사용자 ID
-                cartId: '<%=session.getAttribute("cartId")%>
-		',
+                cartId: '<%=session.getAttribute("cartId")%>',
 				// 세션에서 가져온 장바구니 ID
 				totalPrice : parseInt(
 						document.getElementById("totalPrice").innerText, 10),
