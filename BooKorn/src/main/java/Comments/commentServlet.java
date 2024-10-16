@@ -17,8 +17,10 @@ public class commentServlet extends HttpServlet{
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String prod_id = req.getParameter("prod_id");
-		if(prod_id==null) {
+		
+		
+		String prod_id = req.getParameter("product_id");
+		if(prod_id==null || prod_id.isEmpty()) {
 			prod_id="P001";
 		}
 		int current_page =1;

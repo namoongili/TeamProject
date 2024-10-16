@@ -212,7 +212,6 @@ public class productDAO {
 	    PreparedStatement pstmt = null;
 	    String cartId = null;
 	    int rRow = 0;
-	    System.out.println(userId);
 	    try {
 	        conn = dbCon();
 
@@ -225,7 +224,6 @@ public class productDAO {
 	        pstmt.setString(2, userId);
 	        rRow = pstmt.executeUpdate();
 	        
-	        System.out.println(rRow);
 	        
 	    } catch (SQLException e) {
 	        e.printStackTrace();
@@ -282,9 +280,9 @@ public class productDAO {
 	        conn = dbCon();
 
 	        // 카트 존재 여부 확인
-	        String sqlCheckCart = "SELECT cart_id FROM cart WHERE user_id = 'U001'";
+	        String sqlCheckCart = "SELECT cart_id FROM cart WHERE user_id = ?";
 	        pstmtCart = conn.prepareStatement(sqlCheckCart);
-	      //  pstmtCart.setString(1, userId);
+	        pstmtCart.setString(1, userId);
 	        rs = pstmtCart.executeQuery();
 
 	        // 카트가 없으면 새로 생성

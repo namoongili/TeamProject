@@ -255,9 +255,9 @@
             <% if (isLoggedIn != null && isLoggedIn) { %>
                 <a href="#">마이페이지</a>
                 <a href="/BooKorn/cart">장바구니</a>
-                <a href="/logout">로그아웃</a>
+                <a href="/BooKorn/logout">로그아웃</a>
             <% } else { %>
-                <a href="/login">로그인</a>
+                <a href="/BooKorn/login">로그인</a>
             <% } %>
         </div>
     </header>

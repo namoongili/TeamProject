@@ -18,7 +18,7 @@ public class CartDeleteServlet extends HttpServlet {
 
         // 현재 세션에서 사용자 ID 가져오기
         HttpSession session = request.getSession();
-        String userId = (String) session.getAttribute("userId");
+        String userId = (String) session.getAttribute("user_id");
 
         if (cartItemId == null || userId == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

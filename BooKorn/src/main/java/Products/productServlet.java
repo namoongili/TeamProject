@@ -16,9 +16,10 @@ public class productServlet extends HttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
 		String prod_id = req.getParameter("id");
-		if(prod_id == null) {
+		if(prod_id == null || prod_id.isEmpty()) {
 			prod_id = "P001";
 		}
+		System.out.println(prod_id);
 		productService service = new productService();
 		product prd = service.selectPrd(prod_id);
 		
