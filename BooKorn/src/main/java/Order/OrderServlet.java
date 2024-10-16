@@ -93,14 +93,10 @@ public class OrderServlet extends HttpServlet {
 
 
 
-
-
-
-
-	private Order getOrder(String user_id) throws SQLException {
-		OrderService os = new OrderService();
-        return os.getOrder(user_id);
-    }
+//	private Order getOrder(String user_id) throws SQLException {
+//		OrderService os = new OrderService();
+//        return os.getOrder(user_id);
+//    }
 
 }
 

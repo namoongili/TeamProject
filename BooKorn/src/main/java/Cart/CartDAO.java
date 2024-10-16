@@ -14,9 +14,6 @@ public class CartDAO {
 	private String user = "system";
 	private String password = "pass";
 
-//	public static void main(String[] args) throws SQLException {
-//		getCart("minsoo001");
-//	}
 	private Connection dbCon() throws SQLException {
 		Connection con = null;
 		try {
@@ -29,6 +26,7 @@ public class CartDAO {
 		return con;
 	}
 
+	//로그인 아이디로 현재 보유중인 장바구니 정보 데이터베이스에서 호
 	public ArrayList<Cart> getCart(String user_id) throws SQLException {
 		Connection con = dbCon();
 
@@ -51,12 +49,12 @@ public class CartDAO {
 			rs = pst.executeQuery();
 
 			while (rs.next()) {
-				String id = rs.getString(2);
-				String p_id = rs.getString(3);
-				int quantity = rs.getInt(4);
-				String name = rs.getString(5);
-				String detail = rs.getString(6);
-				int price = rs.getInt(7);
+				String id = rs.getString(2); //카트id
+				String p_id = rs.getString(3); //상품id
+				int quantity = rs.getInt(4); //수량
+				String name = rs.getString(5); //제품이름
+				String detail = rs.getString(6); //제품내용
+				int price = rs.getInt(7); //가격
 				Cart cart = new Cart(id, quantity, name, detail, price, p_id);
 
 				System.out.println(cart.toString());
@@ -76,6 +74,7 @@ public class CartDAO {
 		return list;
 	}
 
+	//장바구니 내 아이템 삭제 기능
 	public void deleteCartitem(String userId, String cartItemId) throws SQLException {
 		Connection con = dbCon();
 
@@ -90,9 +89,10 @@ public class CartDAO {
 		}
 	}
 
+	//장바구니 수정 완료 후 결제 화면으로 넘어가기 전 현재 장바구니 상태를 저장
 	public void saveCartItems(String userId, ArrayList<Cart> cartItems) throws SQLException {
 		Connection con = dbCon();
-		String cartId = generateCartId();
+		String cartId = generateCartId(con)+"";
 
 		try {
 			// 기존 cart와 cartitem 삭제
@@ -141,6 +141,8 @@ public class CartDAO {
 		}
 	}
 
+	
+	//장바구니 내에 있는 상품의 총 가격 호
 	public int getTotalPrice(String userId) throws SQLException {
 		Connection con = dbCon();
 
@@ -183,20 +185,22 @@ public class CartDAO {
 	}
 
 	// cart_id를 생성하는 메서드
-	public String generateCartId() {
+	public int generateCartId(Connection conn) throws SQLException {
 		// UUID를 사용하여 고유한 ID를 생성한 후, 필요한 길이로 잘라서 반환합니다.
-		return UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+		//return UUID.randomUUID().toString().replace("-", "").substring(0, 10);
 
-//        String sql = "SELECT cart_seq.NEXTVAL FROM dual";
-//	    try (PreparedStatement pstmt = conn.prepareStatement(sql);
-//	         ResultSet rs = pstmt.executeQuery()) {
-//	        if (rs.next()) {
-//	            return rs.getInt(1);
-//	        }
-//	    }
-//	    throw new SQLException("Failed to retrieve next cart ID");
+        String sql = "SELECT cart_seq.NEXTVAL FROM dual";
+	    try (PreparedStatement pstmt = conn.prepareStatement(sql);
+	         ResultSet rs = pstmt.executeQuery()) {
+	        if (rs.next()) {
+	            return rs.getInt(1);
+	        }
+	    }
+	    throw new SQLException("Failed to retrieve next cart ID");
 	}
 
+	
+	//현재 접속한 사용자의 장바구니 호출
 	public String getCartId(String userId) throws SQLException {
 		Connection con = dbCon();
 
@@ -234,15 +238,15 @@ public class CartDAO {
 		return id;
 	}
 
-	private String getNextCartId(Connection conn) throws SQLException {
-		return UUID.randomUUID().toString().replace("-", "").substring(0, 5);
-//		String sql = "SELECT cart_seq.NEXTVAL FROM dual";
-//		try (PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
-//			if (rs.next()) {
-//				return rs.getInt(1);
-//			}
-//		}
-//		throw new SQLException("Failed to retrieve next cart ID");
+	private int getNextCartId(Connection conn) throws SQLException {
+		//return UUID.randomUUID().toString().replace("-", "").substring(0, 5);
+		String sql = "SELECT cart_seq.NEXTVAL FROM dual";
+		try (PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
+			if (rs.next()) {
+				return rs.getInt(1);
+			}
+		}
+		throw new SQLException("Failed to retrieve next cart ID");
 	}
 
 }

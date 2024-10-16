@@ -16,7 +16,7 @@ public class OrderService {
 	public int createOrder(String userId, String cartId, int totalPrice, String memo, String name, String address, String phone) throws SQLException {
 		return ordao.createOrder(userId, cartId, totalPrice, memo, name, address, phone);
 	}
-	public Order getOrder(String user_id) throws SQLException {
-		return ordao.getOrder(user_id);
-	}
+//	public Order getOrder(String user_id) throws SQLException {
+//		return ordao.getOrder(user_id);
+//	}
 }

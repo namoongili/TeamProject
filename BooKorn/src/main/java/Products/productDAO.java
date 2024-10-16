@@ -51,6 +51,7 @@ public class productDAO {
 //	}
 	
 
+	//화면에 있는 제품을 클릭하면 해당하는 제품의 객체를 반환
 	public product selectProduct(String product_id) {
 		
 		Connection con = null;
@@ -361,28 +362,28 @@ public class productDAO {
 	}
 
 
-	private String getNextCartId(Connection conn) throws SQLException {
-		return UUID.randomUUID().toString().replace("-", "").substring(0, 5);
-//	    String sql = "SELECT cart_seq.NEXTVAL FROM dual";
-//	    try (PreparedStatement pstmt = conn.prepareStatement(sql);
-//	         ResultSet rs = pstmt.executeQuery()) {
-//	        if (rs.next()) {
-//	            return rs.getInt(1);
-//	        }
-//	    }
-//	    throw new SQLException("Failed to retrieve next cart ID");
+	private int getNextCartId(Connection conn) throws SQLException {
+		//return UUID.randomUUID().toString().replace("-", "").substring(0, 5);
+	    String sql = "SELECT cart_seq.NEXTVAL FROM dual";
+	    try (PreparedStatement pstmt = conn.prepareStatement(sql);
+	         ResultSet rs = pstmt.executeQuery()) {
+	        if (rs.next()) {
+	            return rs.getInt(1);
+	        }
+	    }
+	    throw new SQLException("Failed to retrieve next cart ID");
 	}
 
-	private String getNextCartItemId(Connection conn) throws SQLException {
-		return UUID.randomUUID().toString().replace("-", "").substring(0, 5);
-//	    String sql = "SELECT cartitem_seq.NEXTVAL FROM dual";
-//	    try (PreparedStatement pstmt = conn.prepareStatement(sql);
-//	         ResultSet rs = pstmt.executeQuery()) {
-//	        if (rs.next()) {
-//	            return rs.getInt(1);
-//	        }
-//	    }
-//	    throw new SQLException("Failed to retrieve next cart item ID");
+	private int getNextCartItemId(Connection conn) throws SQLException {
+		//return UUID.randomUUID().toString().replace("-", "").substring(0, 5);
+	    String sql = "SELECT cartitem_seq.NEXTVAL FROM dual";
+	    try (PreparedStatement pstmt = conn.prepareStatement(sql);
+	         ResultSet rs = pstmt.executeQuery()) {
+	        if (rs.next()) {
+	            return rs.getInt(1);
+	        }
+	    }
+	    throw new SQLException("Failed to retrieve next cart item ID");
 	}
 
 	
