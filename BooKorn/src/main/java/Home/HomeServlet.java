@@ -30,7 +30,7 @@ public class HomeServlet extends HttpServlet {
         System.out.println(userId);
 
         // 오늘의 책, 베스트셀러 정보
-        String
+        Book
         todayBook = homeService.getTodayBook();
         req.setAttribute("todayBook", todayBook);
         

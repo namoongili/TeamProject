@@ -44,20 +44,21 @@ public class HomeDAO {
 	}
 
 	// 오늘의 책 가져오기
-	public String getTodayBook() {
-		String todayBook = null;
+	public Book getTodayBook() {
+		Book todayBook = null;
 		//String sql = "SELECT product_name FROM products WHERE product_id = 'P001'";  // 예시 쿼리
 
 		// 랜덤으로 하나의 책을 선택
-		String sql = "SELECT product_name FROM products ORDER BY DBMS_RANDOM.VALUE FETCH FIRST 1 ROWS ONLY"; // Oracle
+		String sql = "SELECT products.product_name, product_author, product_detail, product_price, product_image "
+				+ "FROM products ORDER BY DBMS_RANDOM.VALUE FETCH FIRST 1 ROWS ONLY"; // Oracle
 																												// DB 예시
 
 		try (Connection con = dbCon();
 				PreparedStatement pst = con.prepareStatement(sql);
 				ResultSet rs = pst.executeQuery()) {
 
-			if (rs.next()) {
-				todayBook = rs.getString("product_name");
+			if (rs.next()) {//String name, String author, String description, String price, String image
+				todayBook = new Book(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5));
 			}
 
 		} catch (Exception e) {
